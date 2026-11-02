@@ -1,0 +1,19 @@
+{
+  "project": "MyFlork",
+  "platform": "ios",
+  "github": {
+    "owner": "xrubendev",
+    "repo": "MyFlork"
+  },
+  "provider": "github",
+  "codemagic": {},
+  "bitrise": {},
+  "ios": {},
+  "flutter": {
+    "version": "3.47.9",
+    "watch": {}
+  },
+  "reactNative": {},
+  "kmp": {},
+  "mobai": {}
+}
