@@ -1,0 +1,40 @@
+name: myflork
+description: MyFlork, the wallet of the Flork ecosystem.
+publish_to: none
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.6.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^2.6.1
+  go_router: ^14.6.2
+  solana: ^0.31.0
+  bip39: ^1.0.6
+  flutter_secure_storage: ^9.2.2
+  http: ^1.2.2
+  qr_flutter: ^4.1.0
+  webview_flutter: ^4.10.0
+  google_fonts: ^6.2.1
+  url_launcher: ^6.3.1
+  local_auth: 2.3.0
+  crypto: ^3.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/art/
+  fonts:
+    - family: ComicKats
+      fonts:
+        - asset: assets/fonts/ComicKats.ttf
+    - family: HeyComic
+      fonts:
+        - asset: assets/fonts/HeyComic.ttf
