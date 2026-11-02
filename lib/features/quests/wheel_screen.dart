@@ -1,11 +1,13 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/theme.dart';
 import '../../core/family_api.dart';
+import '../../core/sfx.dart';
 import '../../core/wallet.dart';
 import '../../widgets/common.dart';
 
@@ -33,6 +35,7 @@ class _WheelScreenState extends ConsumerState<WheelScreen> with SingleTickerProv
       if (slice != _lastTick) {
         _lastTick = slice;
         HapticFeedback.selectionClick();
+        ref.read(sfxProvider.notifier).tick();
       }
       setState(() {});
     });
@@ -52,6 +55,7 @@ class _WheelScreenState extends ConsumerState<WheelScreen> with SingleTickerProv
     setState(() => _busy = true);
     try {
       final r = await spinWheel(wallet);
+      ref.read(sfxProvider.notifier).play('wheel_start');
       final slice = 2 * pi / slices;
       // Slice i is drawn starting at angle i*slice from the top, clockwise; land its middle under the pointer.
       final target = 2 * pi - (r.index * slice + slice / 2);
@@ -60,6 +64,7 @@ class _WheelScreenState extends ConsumerState<WheelScreen> with SingleTickerProv
       _to = base + 6 * 2 * pi + target + (Random().nextDouble() - 0.5) * slice * 0.6;
       await _spin.forward(from: 0);
       HapticFeedback.heavyImpact();
+      ref.read(sfxProvider.notifier).play(r.points >= 500 ? 'wheel_jackpot' : 'wheel_win');
       ref.invalidate(wheelProvider);
       ref.invalidate(pointsProvider);
       if (!mounted) return;
@@ -67,7 +72,7 @@ class _WheelScreenState extends ConsumerState<WheelScreen> with SingleTickerProv
         context: context,
         builder: (c) => AlertDialog(
           backgroundColor: Fk.surface,
-          icon: Image.asset('assets/art/meet_flork.png', height: 90),
+          icon: SvgPicture.asset('assets/art/svg/loot_box.svg', height: 120),
           title:
               Text('+${r.points} FLORK', textAlign: TextAlign.center, style: Fk.display.copyWith(fontSize: 34, color: Fk.knit)),
           content: const Text('Added to your Flork on flork.family.', textAlign: TextAlign.center),
@@ -85,7 +90,13 @@ class _WheelScreenState extends ConsumerState<WheelScreen> with SingleTickerProv
   Widget build(BuildContext context) {
     final wheel = ref.watch(wheelProvider);
     return Scaffold(
-      appBar: AppBar(title: const Text('Flork wheel')),
+      appBar: AppBar(title: const Text('Flork wheel'), actions: [
+        IconButton(
+          tooltip: ref.watch(sfxProvider) ? 'Mute' : 'Sound on',
+          icon: Icon(ref.watch(sfxProvider) ? Icons.volume_up_rounded : Icons.volume_off_rounded),
+          onPressed: () => ref.read(sfxProvider.notifier).toggle(),
+        ),
+      ]),
       body: wheel.when(
         loading: () => const Center(child: CircularProgressIndicator(color: Fk.knit)),
         error: (e, _) => Center(

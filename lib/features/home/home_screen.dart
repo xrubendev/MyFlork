@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -79,35 +80,42 @@ class _Hero extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: onTap,
-        child: Container(
-          height: 360,
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Color(0xFF3A1730), Fk.bg],
-            ),
-          ),
-          child: SafeArea(
-            bottom: false,
-            child: Stack(children: [
-              Positioned(right: -10, bottom: 8, child: Image.asset('assets/art/flork_celular.png', height: 290)),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 24, 140, 0),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text('EARN\nFLORK', style: Fk.display.copyWith(fontSize: 56, color: Fk.knit)),
-                  const SizedBox(height: 10),
-                  const Text('Quests, posts and trades that pay in FLORK.', style: TextStyle(fontSize: 15)),
-                  const SizedBox(height: 18),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                    decoration: BoxDecoration(color: Fk.knit, borderRadius: BorderRadius.circular(Fk.rPill)),
-                    child: const Text('Start quests', style: TextStyle(fontWeight: FontWeight.w800)),
-                  ),
-                ]),
+        child: SizedBox(
+          height: 380,
+          child: Stack(fit: StackFit.expand, children: [
+            // The crew on the rooftop, with a dark wash on the left for the title and fading into the page below.
+            SvgPicture.asset('assets/art/svg/home_hero.svg', fit: BoxFit.cover, alignment: const Alignment(1, 1)),
+            const DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [Color(0xE6140A18), Color(0x00140A18)], stops: [.25, .75]),
               ),
-            ]),
-          ),
+            ),
+            const DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0x00141016), Fk.bg], stops: [.7, 1]),
+              ),
+            ),
+            SafeArea(
+              bottom: false,
+              child: Stack(children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 24, 170, 0),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text('EARN\nFLORK', style: Fk.display.copyWith(fontSize: 56, color: Fk.knit)),
+                    const SizedBox(height: 10),
+                    const Text('Quests, posts and trades that pay in FLORK.', style: TextStyle(fontSize: 15)),
+                    const SizedBox(height: 18),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                      decoration: BoxDecoration(color: Fk.knit, borderRadius: BorderRadius.circular(Fk.rPill)),
+                      child: const Text('Start quests', style: TextStyle(fontWeight: FontWeight.w800)),
+                    ),
+                  ]),
+                ),
+              ]),
+            ),
+          ]),
         ),
       );
 }
@@ -145,7 +153,7 @@ class _WheelCard extends ConsumerWidget {
         ),
         child: Stack(children: [
           Positioned(right: -30, top: -30, child: Icon(Icons.casino_rounded, size: 200, color: Fk.knit.withValues(alpha: 0.18))),
-          Positioned(right: 12, bottom: 0, child: Image.asset('assets/art/flork_acostado.png', height: 80)),
+          Positioned(right: 0, bottom: -6, child: SvgPicture.asset('assets/art/svg/loot_box.svg', height: 130)),
           Padding(
             padding: const EdgeInsets.all(18),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

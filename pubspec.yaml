@@ -21,6 +21,9 @@ dependencies:
   url_launcher: ^6.3.1
   local_auth: 2.3.0
   crypto: ^3.0.8
+  audioplayers: ^6.8.1
+  shared_preferences: ^2.5.6
+  flutter_svg: ^2.3.2
 
 dev_dependencies:
   flutter_test:
@@ -31,6 +34,8 @@ flutter:
   uses-material-design: true
   assets:
     - assets/art/
+    - assets/art/svg/
+    - assets/sfx/
   fonts:
     - family: ComicKats
       fonts:

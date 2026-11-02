@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -27,31 +28,34 @@ class QuestsScreen extends ConsumerWidget {
             expandedHeight: 240,
             backgroundColor: Fk.bg,
             flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                decoration: const BoxDecoration(
-                  gradient:
-                      LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFF3A1730), Fk.bg]),
-                ),
-                child: Stack(children: [
-                  Positioned(right: 8, bottom: 0, child: Image.asset('assets/art/meet_flork.png', height: 150)),
-                  Positioned(
-                    left: 20,
-                    bottom: 24,
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text('QUESTS', style: Fk.display.copyWith(fontSize: 44, color: Fk.knit)),
-                      const SizedBox(height: 4),
-                      board.when(
-                        data: (b) => Text(
-                          '${b.total} Flork${b.rank == null ? '' : ' · #${b.rank} of ${b.people}'}',
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                        ),
-                        loading: () => const SizedBox(height: 20),
-                        error: (_, __) => const SizedBox(height: 20),
-                      ),
-                    ]),
+              background: Stack(fit: StackFit.expand, children: [
+                SvgPicture.asset('assets/art/svg/quests_hero.svg', fit: BoxFit.cover, alignment: const Alignment(1, 0)),
+                const DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Color(0x00141016), Fk.bg],
+                        stops: [.45, 1]),
                   ),
-                ]),
-              ),
+                ),
+                Positioned(
+                  left: 20,
+                  bottom: 24,
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text('QUESTS', style: Fk.display.copyWith(fontSize: 44, color: Fk.knit)),
+                    const SizedBox(height: 4),
+                    board.when(
+                      data: (b) => Text(
+                        '${b.total} Flork${b.rank == null ? '' : ' · #${b.rank} of ${b.people}'}',
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                      ),
+                      loading: () => const SizedBox(height: 20),
+                      error: (_, __) => const SizedBox(height: 20),
+                    ),
+                  ]),
+                ),
+              ]),
             ),
           ),
           SliverPadding(

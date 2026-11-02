@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/theme.dart';
@@ -76,6 +77,15 @@ class _CatalogueGridState extends State<CatalogueGrid> {
         ),
       ),
       const SizedBox(height: 14),
+      if (apps.isEmpty)
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          child: Column(children: [
+            SvgPicture.asset('assets/art/svg/empty_search.svg', height: 150),
+            const SizedBox(height: 8),
+            const Text('No app matches that search', style: TextStyle(color: Fk.muted)),
+          ]),
+        ),
       GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
