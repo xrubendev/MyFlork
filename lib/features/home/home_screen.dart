@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../app/theme.dart';
 import '../../core/chain.dart';
+import '../../core/family_api.dart';
 import '../florkverse/apps.dart';
 import '../florkverse/florkverse_screen.dart';
 import '../../widgets/common.dart';
@@ -14,13 +15,12 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final portfolio = ref.watch(portfolioProvider);
-    final earn = florkApps.firstWhere((a) => a.category == 'Earn');
     return Scaffold(
       body: RefreshIndicator(
         color: Fk.knit,
         onRefresh: () => ref.refresh(portfolioProvider.future),
         child: CustomScrollView(slivers: [
-          SliverToBoxAdapter(child: _Hero(onTap: () => context.push('/browse', extra: earn))),
+          SliverToBoxAdapter(child: _Hero(onTap: () => context.push('/quests'))),
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
             sliver: SliverList.list(children: [
@@ -46,6 +46,8 @@ class HomeScreen extends ConsumerWidget {
                   ]),
                 ),
               ),
+              const _WheelCard(),
+              const SizedBox(height: 16),
               _SearchField(onTap: () => context.go('/florkverse')),
               const SectionTitle('Featured'),
               SizedBox(
@@ -124,4 +126,45 @@ class _SearchField extends StatelessWidget {
           Text('Search Florkverse apps', style: TextStyle(color: Fk.muted, fontSize: 16)),
         ]),
       );
+}
+
+/// Wheel banner under the balance, as MyDoge does with its wheel.
+class _WheelCard extends ConsumerWidget {
+  const _WheelCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tickets = ref.watch(wheelProvider).valueOrNull?.tickets;
+    return FkCard(
+      padding: EdgeInsets.zero,
+      onTap: () => context.push('/wheel'),
+      child: Container(
+        height: 150,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(colors: [Color(0xFF2A0F22), Color(0xFF4A1638)]),
+        ),
+        child: Stack(children: [
+          Positioned(right: -30, top: -30, child: Icon(Icons.casino_rounded, size: 200, color: Fk.knit.withValues(alpha: 0.18))),
+          Positioned(right: 12, bottom: 0, child: Image.asset('assets/art/flork_acostado.png', height: 80)),
+          Padding(
+            padding: const EdgeInsets.all(18),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('THE FLORK WHEEL', style: Fk.display.copyWith(fontSize: 26, color: Fk.gold)),
+              const SizedBox(height: 4),
+              const Text('Quest. Spin. Stack Flork.', style: TextStyle(fontWeight: FontWeight.w600)),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                decoration: BoxDecoration(color: Fk.gold, borderRadius: BorderRadius.circular(8)),
+                child: Text(
+                  tickets == null || tickets == 0 ? 'SPIN NOW' : 'SPIN NOW · $tickets',
+                  style: Fk.display.copyWith(fontSize: 16, color: Fk.bg),
+                ),
+              ),
+            ]),
+          ),
+        ]),
+      ),
+    );
+  }
 }

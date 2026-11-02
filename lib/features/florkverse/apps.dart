@@ -33,7 +33,7 @@ const florkApps = [
   FlorkApp(
     name: 'Earn FLORK',
     tagline: 'Quests that pay in FLORK',
-    about: 'Complete tasks on flork.family, collect points and turn them into FLORK.',
+    about: 'Complete tasks on flork.family and stack Flork for the launch.',
     url: 'https://flork.family/earn',
     category: 'Earn',
     art: 'assets/art/flork_celular.png',

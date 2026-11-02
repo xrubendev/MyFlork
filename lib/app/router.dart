@@ -13,6 +13,8 @@ import '../features/florkverse/florkverse_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/market/market_screen.dart';
 import '../features/onboarding/onboarding_screen.dart';
+import '../features/quests/quests_screen.dart';
+import '../features/quests/wheel_screen.dart';
 import '../features/swap/swap_screen.dart';
 import '../widgets/token_picker.dart';
 import '../features/wallet/receive_screen.dart';
@@ -65,6 +67,8 @@ final routerProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(routes: [GoRoute(path: '/florkverse', builder: (_, __) => const FlorkverseScreen())]),
         ],
       ),
+      GoRoute(path: '/quests', builder: (_, __) => const QuestsScreen()),
+      GoRoute(path: '/wheel', builder: (_, __) => const WheelScreen()),
       GoRoute(path: '/send', builder: (_, __) => const SendScreen()),
       GoRoute(path: '/swap', builder: (_, s) => SwapScreen(initialTo: s.extra as Tok?)),
       GoRoute(path: '/receive', builder: (_, __) => const ReceiveScreen()),
