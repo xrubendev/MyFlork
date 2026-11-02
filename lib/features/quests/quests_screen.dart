@@ -17,7 +17,10 @@ class QuestsScreen extends ConsumerWidget {
     return Scaffold(
       body: RefreshIndicator(
         color: Fk.knit,
-        onRefresh: () => ref.refresh(pointsProvider.future),
+        onRefresh: () async {
+          ref.invalidate(xTasksProvider);
+          await ref.refresh(pointsProvider.future);
+        },
         child: CustomScrollView(slivers: [
           SliverAppBar(
             pinned: true,
@@ -57,11 +60,21 @@ class QuestsScreen extends ConsumerWidget {
               loading: () => const SliverToBoxAdapter(
                   child: Padding(padding: EdgeInsets.all(40), child: Center(child: CircularProgressIndicator(color: Fk.knit)))),
               error: (e, _) => SliverToBoxAdapter(child: Text('$e', style: const TextStyle(color: Fk.muted))),
-              data: (b) => SliverList.separated(
-                itemCount: b.quests.length + 1,
-                separatorBuilder: (_, __) => const SizedBox(height: 10),
-                itemBuilder: (_, i) => i == 0 ? const _WheelBanner() : _QuestCard(q: b.quests[i - 1]),
-              ),
+              data: (b) {
+                final x = ref.watch(xTasksProvider).valueOrNull ?? const <XTask>[];
+                final rows = <Widget>[
+                  const _WheelBanner(),
+                  for (final t in x.where((t) => !t.done)) _XTaskCard(t: t),
+                  for (final q in b.quests.where((q) => !q.done)) _QuestCard(q: q),
+                  for (final t in x.where((t) => t.done)) _XTaskCard(t: t),
+                  for (final q in b.quests.where((q) => q.done)) _QuestCard(q: q),
+                ];
+                return SliverList.separated(
+                  itemCount: rows.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 10),
+                  itemBuilder: (_, i) => rows[i],
+                );
+              },
             ),
           ),
         ]),
@@ -142,6 +155,54 @@ class _WheelBanner extends ConsumerWidget {
           ]),
         ),
         const Icon(Icons.chevron_right_rounded, color: Fk.knit),
+      ]),
+    );
+  }
+}
+
+class _XTaskCard extends StatelessWidget {
+  const _XTaskCard({required this.t});
+  final XTask t;
+
+  @override
+  Widget build(BuildContext context) {
+    final verbs = t.actions.map((a) => a.isEmpty ? a : '${a[0].toUpperCase()}${a.substring(1)}').join(' + ');
+    return FkCard(
+      onTap: t.done
+          ? null
+          : () => context.push('/browse',
+              extra: const FlorkApp(
+                name: 'Flork Family',
+                tagline: 'Earn Flork',
+                about: 'Earn Flork',
+                url: '$familyBase/earn',
+                category: 'Earn',
+                art: 'assets/art/meet_flork.png',
+              )),
+      padding: const EdgeInsets.all(16),
+      child: Row(children: [
+        Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(color: t.done ? Fk.up.withValues(alpha: 0.15) : Colors.black, shape: BoxShape.circle),
+          child: Center(
+            child: t.done
+                ? const Icon(Icons.check_rounded, color: Fk.up)
+                : const Text('X', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 18)),
+          ),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text("$verbs @${t.author}'s post",
+                style: TextStyle(fontWeight: FontWeight.w700, color: t.done ? Fk.muted : Fk.chalk)),
+            if (t.text != null)
+              Text(t.text!, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Fk.muted, fontSize: 12)),
+            if (!t.done) Text('${t.spotsLeft} spots left', style: const TextStyle(color: Fk.muted, fontSize: 12)),
+          ]),
+        ),
+        const SizedBox(width: 10),
+        Text('+${t.points} Flork', style: TextStyle(fontWeight: FontWeight.w800, color: t.done ? Fk.muted : Fk.gold)),
       ]),
     );
   }

@@ -30,6 +30,8 @@ final routerProvider = Provider<GoRouter>((ref) {
   ref.listen(lockProvider, (_, __) => refresh.value++);
   ref.onDispose(refresh.dispose);
 
+  String? pending;
+
   return GoRouter(
     initialLocation: '/home',
     refreshListenable: refresh,
@@ -46,8 +48,17 @@ final routerProvider = Provider<GoRouter>((ref) {
               : lock.locked
                   ? '/lock'
                   : null;
-      if (gate != null) return at == gate ? null : gate;
-      if (const ['/splash', '/welcome', '/set-pin', '/lock'].contains(at)) return '/home';
+      const gates = ['/splash', '/welcome', '/set-pin', '/lock'];
+      if (gate != null) {
+        // Keep where a link wanted to go (myflork://open/wheel) and go there once unlocked.
+        if (!gates.contains(at)) pending = at;
+        return at == gate ? null : gate;
+      }
+      if (gates.contains(at)) {
+        final next = pending ?? '/home';
+        pending = null;
+        return next;
+      }
       return null;
     },
     routes: [

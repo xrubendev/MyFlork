@@ -47,6 +47,45 @@ class Quest {
   }
 }
 
+/// A task on a post on X opened by the flork.family team (repost, like, reply); verified on flork.family Earn.
+class XTask {
+  const XTask(
+      {required this.id,
+      required this.author,
+      required this.text,
+      required this.actions,
+      required this.points,
+      required this.spotsLeft,
+      required this.done});
+  final String id, author;
+  final String? text;
+  final List<String> actions;
+  final int points, spotsLeft;
+  final bool done;
+
+  factory XTask.fromJson(Map<String, dynamic> j) => XTask(
+        id: '${j['id']}',
+        author: j['author'] as String,
+        text: j['text'] as String?,
+        actions: [for (final a in j['actions'] as List) '$a'],
+        points: (j['points'] as int?) == null || j['points'] == 0 ? 50 : j['points'] as int,
+        spotsLeft: ((j['spots'] as int? ?? 0) - (j['verified'] as int? ?? 0)).clamp(0, 1 << 30),
+        done: (j['mine'] as Map?)?['status'] == 'paid',
+      );
+}
+
+/// Open X tasks plus the ones this wallet already finished.
+final xTasksProvider = FutureProvider<List<XTask>>((ref) async {
+  final wallet = await ref.watch(walletProvider.future);
+  final res = await http.get(Uri.parse('$familyBase/api/tasks?wallet=${wallet?.address ?? ''}'));
+  if (res.statusCode != 200) return [];
+  final list = (jsonDecode(res.body) as Map<String, dynamic>)['tasks'] as List;
+  return [
+    for (final t in list)
+      if ((t as Map<String, dynamic>)['status'] == 'open' || (t['mine'] as Map?)?['status'] == 'paid') XTask.fromJson(t),
+  ]..sort((a, b) => (a.done ? 1 : 0) - (b.done ? 1 : 0));
+});
+
 class PointsBoard {
   const PointsBoard({required this.quests, required this.total, required this.rank, required this.people});
   final List<Quest> quests;

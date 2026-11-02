@@ -2,6 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>family.flork.myflork</string>
+			<key>CFBundleURLSchemes</key>
+			<array><string>myflork</string></array>
+		</dict>
+	</array>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Unlock MyFlork and approve sensitive actions with Face ID.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
